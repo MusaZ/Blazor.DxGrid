@@ -1,0 +1,58 @@
+﻿@page "/"
+@using DevExpress.Blazor
+@using CurrieTechnologies.Razor.SweetAlert2
+@using General.Blazor.App.Models
+
+@inject NavigationManager NM
+@inject SweetAlertService Swal
+
+<DxButton Click="@(() => NM.NavigateTo("/test1"))">Test 1</DxButton>
+<DxButton Click="@(() => NM.NavigateTo("/test2"))">Test 2</DxButton>
+<DxButton Click="@(async () => { await swalRes(); })">Sweet Alert</DxButton>
+
+<DxFormLayout>
+  <DxFormLayoutItem Caption="Label" ColSpanMd="6" ColSpanLg="6" BeginRow="true">
+    <DxTextBox></DxTextBox>
+  </DxFormLayoutItem>
+  <DxFormLayoutItem Caption="Label 1" ColSpanMd="6" ColSpanLg="6" BeginRow="true">
+    <DxTextBox></DxTextBox>
+  </DxFormLayoutItem>
+  <DxFormLayoutItem ColSpanMd="6" ColSpanLg="6" CssClass="w-50 d-inline-block" BeginRow="true">
+    <DxButton Text="TIKLA" CssClass="w-100" ></DxButton>
+  </DxFormLayoutItem>
+  <DxFormLayoutItem Caption="List" ColSpanMd="6" BeginRow="true">
+    <DxGrid @ref="dxGrid" Data="Persons" EditMode="GridEditMode.EditCell" EditModelSaving="(GridEditModelSavingEventArgs e) => { Persons[0].Age = (e.EditModel as Person).Age;}">
+      <Columns>
+        <DxGridDataColumn FieldName="Name" ReadOnly="true" DataRowEditorVisible="false"></DxGridDataColumn>
+        <DxGridDataColumn FieldName="Age" Caption="Age" ReadOnly="false" DataRowEditorVisible="true"></DxGridDataColumn>
+        <DxGridCommandColumn EditButtonVisible="true" DeleteButtonVisible="false" NewButtonVisible="false" Context="CommandContext">
+          <CellEditTemplate>
+            <DxButton Text="Save" CssClass="btn btn-primary" Click="() => { dxGrid.SaveChangesAsync();}"></DxButton>
+            <DxButton Text="Cancel" CssClass="btn btn-danger" Click="() => { dxGrid.CancelEditAsync();}"></DxButton>
+          </CellEditTemplate>
+          <CellDisplayTemplate>
+            <DxButton CssClass="btn btn-secondary" Text="Edit" Click="async () => { await dxGrid.StartEditRowAsync(CommandContext.VisibleIndex); }"></DxButton>
+          </CellDisplayTemplate>
+        </DxGridCommandColumn>
+      </Columns>
+    </DxGrid>
+</DxFormLayoutItem>
+</DxFormLayout>
+
+@code
+{
+  DxGrid dxGrid;
+  public IList<Person> Persons = new List<Person>()
+  {
+          new Person()
+          {
+                  Name = "Musa",
+                  Age = 25.5m
+          }
+  };
+  public async Task swalRes()
+  {
+    var res = await Swal.FireAsync("Oooopppsss.", "There is a missing things.", "warning");
+    var str = res.Value;
+  }
+}
